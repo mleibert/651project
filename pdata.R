@@ -6,7 +6,7 @@ options(scipen = 999) # remove annoying scientific notation
 
 if (dir.exists("C:/Users/Administrator/Documents/311")){
 	setwd("C:/Users/Administrator/Documents/311") } else if
-	(dir.exists("G:/math/311")) {	setwd("G:/math/311")
+	(dir.exists("G:/math/651project")) { setwd("G:/math/651project")
 	} else { setwd("C:/Users/michael/Documents/311") }
 
 library(dplyr)

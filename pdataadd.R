@@ -3,17 +3,14 @@ rm(list=ls())
 
 if (dir.exists("C:/Users/Administrator/Documents/311")){
 	setwd("C:/Users/Administrator/Documents/311") } else if
-	(dir.exists("G:/math/311")) {	setwd("G:/math/311")
+	(dir.exists("G:/math/651project")) { setwd("G:/math/651project")
 	} else { setwd("C:/Users/michael/Documents/311") }
-
-table(round( dat[which(dat$SERVICECODEDESCRIPTION == "Pothole"),]$wait,0) )
 
 source("pdata.R")
 
 
 calls<-as.data.frame(reg_dat)
 calls<-calls[which(calls$wait < 15 & calls$wait > 0.08  ),]
-write.csv(calls,"ph.csv",row.names=F)
 
 head( calls  );ncol(calls)
 
