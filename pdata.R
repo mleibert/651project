@@ -73,6 +73,7 @@ dat <- dat %>%
 #################################
 # Model 1 (multivariate linear regression)
 
+dat$pWhite<-as.numeric(dat$pWhite)
 reg_data <- dat %>%
 	filter(!is.na(wait)) %>%
 	filter(SERVICECODEDESCRIPTION == "Pothole") %>%
@@ -112,8 +113,7 @@ datleaf <- dat %>%
 		Prop.commuters = Commuters/Population,
 		Prop.drivers = Drivers/Population,
 		Prop.vacant = Vacant/Households) %>%
-	dplyr::select(wait,LATITUDE, LONGITUDE,block,
-	
+	dplyr::select(wait,LATITUDE, LONGITUDE,block,tract,	
 								temp_daily,
 								rain_bool,
 								rain_heavy_bool,
@@ -136,4 +136,33 @@ datleaf <- dat %>%
 								ADDDATE_morning,
 								ADDDATE_summer)
 
+reg_dat <- dat %>%
+	filter(!is.na(wait)) %>%
+	filter(SERVICECODEDESCRIPTION == "Pothole") %>%
+	mutate(
+		Prop.commuters = Commuters/Population,
+		Prop.drivers = Drivers/Population,
+		Prop.vacant = Vacant/Households) %>%
+	dplyr::select(wait, block,
+								temp_daily,
+								rain_bool,
+								rain_heavy_bool,
+								snow_bool,
+								Prop.commuters,
+								Prop.drivers,
+								Income,
+								Rent,
+								Gini,
+								Prop.vacant,
+								commute.time,
+								hours.worked,
+								Pmoved,
+								pWhite,
+								pHispanic,
+								pPoverty,
+								pRetIncome,
+								pOwned,
+								pEstablishments,
+								ADDDATE_morning,
+								ADDDATE_summer)
 

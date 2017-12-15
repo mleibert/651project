@@ -77,7 +77,63 @@ m
 
 leaflet() %>% addTiles() 
 
+###############
+
+tracts <- readOGR(dsn = ".", layer = "cb_2016_11_tract_500k")
+names(tracts)
+tracts <- fortify(tracts , region = "TRACTCE")
+tracts <-as.data.frame(tracts )
+tracts<- tracts[,c(2,1,3:ncol(tracts))]
+tracts$group<-as.character(  tracts$group)  
+tracts$group<-as.numeric(tracts$group)
+head(tracts);
+
+tractss<-as.numeric(as.character(unique(tracts$id))
+
+nrow(datleaf )
+head(datleaf )
+tractlist<-list()
+tractcount<-tractno<-rep(NA, length( unique(datleaf$tract) ))
+
+for( i in 1: length( unique(tracts$NAME) ) ) {
+	tractno[i]<- as.numeric(unique(tracts$NAME)[i])
+	tractcount[i]<-nrow(
+		datleaf[which(datleaf$tract == tractno[i] ),])
+	tractlist[[i]]<-data.frame(tractno[i],tractcount[i])}
+
+  tractlist<- do.call("rbind", tractlist);names(tractlist)<-
+	c("tract","density");head(tractlist)
+
+which(tractlist[,1]== 75.03)
+
+bins<-c(seq(0,130,by=10),150,190,240, Inf)
 
 
 
+
+
+
+
+tracts$density<-tractlist$density
+tractlist
+names(tracts)
+tracts$NAME
+
+bins<-c(seq(0,130,by=10),150,190,240, Inf)
+pal <- colorBin("YlOrRd", domain = tractlist$density, bins = bins)
+
+m <- leaflet(tracts )  %>% addTiles() %>% addProviderTiles("CartoDB.Positron")
+m %>% addPolygons(
+  fillColor = ~pal(density),
+  weight = 2,
+  opacity = 1,    
+highlight = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE),
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.7)
 
