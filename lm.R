@@ -95,19 +95,19 @@ setwd("G:/Math/311/p")
  
 
 
+	dat<-(data.matrix(callss[,-c(2:3,b,6:8)]))
 
+pairs(dat[,c(1,2:12)])
 
-
+pairs(callss[,-c(2:3,b,6:8)])
 
 # FEMS - Community Events
 
 DCGI<-calls
 DCGI<-DCGI[which(DCGI$SERVICECODEDESCRIPTION== 
-	"FEMS - Community Events"  ),]
+	"FEMS - Smoke Alarm Application"  ),]
 nrow(DCGI)
 head(DCGI)
-
-#DCGI<-nrow(DCGI[complete.cases(DCGI), ])
 
 
 b<-which(names(DCGI) == "wait"):which(names(DCGI) == "late")

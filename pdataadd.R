@@ -13,7 +13,7 @@ calls<-as.data.frame(reg_dat)
 calls<-calls[which(calls$wait < 15 & calls$wait > 0.08  ),]
 
 head( calls  );ncol(calls)
-
+summary(fit)
 summary( lm(  log(wait) ~.,data=calls[,-2] ) )
 anova( lm(  log(wait) ~.,data=calls[,-2] ) )
 
@@ -107,4 +107,37 @@ SSRstar<-sum(anova( lm(  (Y)~., data=CALLS )  )[-25,2])
 (anova( lm(  log(wait)~., data=  calls[,-2])  )[25,2]/nrow(calls))^2
 
 qchisq(.99,24)
+
+
+##### multicolianrity
+
+head(calls)
+X<-calls[,-1]
+
+X<-X[,sapply(X, is.numeric)]
+str(X)
+head(X);nrow(X)
+cX<-cor(X)
+
+for ( i in 1:ncol(X)){	cX[,i][abs( cX[,i] ) < .4 ] <- 0 }
+cX<-round(cX,3)
+cX<-as.data.frame(cX)
+names(cX)<-LETTERS[1:ncol(cX)]
+
+pairs(X)
+
+#vif
+vif(fit) 
+fitz<-lm(cyl~.,data=mtcars)
+influence.measures(fitz)[[2]]
+as.data.frame(influence.measures(fitz))
+
+
+vifs<-rep(NA,length( ncol(X) ) )
+for( i in 1:ncol(X) ){
+	A<-paste( names(X)[i] ,"~",paste(names(X)[-i], collapse="+"),sep = "")
+
+	vifs[i]<-(1-summary( lm(	A , data=X	) )$r.squared)^(-1)}
+
+data.frame(vifs
 

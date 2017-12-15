@@ -5,8 +5,8 @@ correlations<-data.frame(rep(1,30))
 
 
 
-n=70
-for(i in n:113){
+n=60
+for(i in n:nrow(SC) ){
 
 	callss<-calls[which(calls$SERVICECODEDESCRIPTION== SC[i,1]),]
 	callss<-callss[complete.cases(callss), ]
@@ -19,9 +19,10 @@ for(i in n:113){
 	head(callss)
 	b<-which(names(callss) == "pBlack"):which(names(callss) == "pTwo.more")
 	callss<-callss[which(callss$wait < 15  &  callss$wait > 0 ),]
-	callss$wait	<- sqrt(callss$wait	)
+	callss$wait	<- 1/(sqrt(callss$wait	))
 
 	head(data.matrix(callss[,-c(2:3,b,6:8)]))
+
 	calls.cor[[i]]<-cor(	data.matrix(callss[,-c(2:3,b,6:8)])	)
 
 	b<-which(as.numeric(apply( calls.cor[[i]] , 2 , function(x) sum(
@@ -30,7 +31,7 @@ for(i in n:113){
 
 	dnw<-calls.cor[[i]]
 	calls.cor[[i]]<-as.data.frame(calls.cor[[i]][,1])
-	calls.cor[[i]][-1,1][ abs( calls.cor[[i]][-1,1] ) <.35 ] <-as.integer(0)
+	calls.cor[[i]][-1,1][ abs( calls.cor[[i]][-1,1] ) <0 ] <-as.integer(0)
 	calls.cor[[i]]$Cor<-ifelse( calls.cor[[i]][,1] != 0 , "*" , "")
 	calls.cor[[i]]<-calls.cor[[i]][-1,]
  	calls.cor[[i]][,1]<-round(calls.cor[[i]][,1],4)
@@ -65,8 +66,63 @@ correlations<-correlations[,-which( sapply(correlations, class) ==
 
 correlations<-correlations[,which(colSums(abs(correlations)) != 0)]
 
-for(i in 1:length( names(correlations) )  ){
-	ggsave( paste0("sqrt",names(correlations)[i] ,".pdf") ,
+
+
+
+
+
+####
+pvals<-rep(NA,length(n:nrow(SC)))
+Rsq<-rowz<-namez<-ID<-rep(NA,length(n:nrow(SC)))
+
+lmsum<-list()
+n=60
+for(i in n:nrow(SC) ){
+
+DCGI<-calls
+DCGI<-DCGI[which(DCGI$SERVICECODEDESCRIPTION== 	SC[i,1]  ),]
+nrow(DCGI)
+head(DCGI)
+
+
+b<-which(names(DCGI) == "wait"):which(names(DCGI) == "late")
+dnw<-which(names(DCGI) == "precip_daily"):ncol(DCGI)
+
+	DCGI<-  ( (DCGI[,c(	b,dnw	)])	)
+	head(DCGI[, -which(names(DCGI) %in%  names(DCGI)[c(13,15)] ) ])
+	b<-which(names(DCGI) == "pBlack"):which(names(DCGI) == "pTwo.more")
+	DCGI<-DCGI[which(DCGI$wait < 15 &  DCGI$wait > 0.04 ),]
+
+
+	DCGI<- DCGI[,-c(2:3,b,6:8)]
+	DCGI$pWhite<-as.numeric(DCGI$pWhite)
+ 	DCGI<- DCGI[, -which(names(DCGI) == "new.residents") ]
+ 	DCGI<- DCGI[, -which(names(DCGI) == "old.residents") ]
+	DCGI$Occupied<-DCGI$Occupied/DCGI$Households
+ 	DCGI<- DCGI[, -which(names(DCGI) %in%  names(DCGI)[c(13,15)] ) ]
+
+ 
+	pvals[i-59]<-length((which(summary(lm( wait~. , data=DCGI )
+		)$coefficients[,4] 		<.06)))
+	
+	Rsq[i-59]<-	summary(lm( wait~. , data=DCGI )	)$r.squared
+	lmsum[[i-59]]<-summary(lm( wait~. , data=DCGI )	) 
+	rowz[i-59]<-nrow(DCGI)
+	namez[i-59]<-as.character(SC[i,1] )
+	ID[i-59]<-i
+}
+
+SC[n+4,]
+data.frame(namez,Rsq,rowz,pvals,ID)
+	lmsum[[103-59]]
+#
+
+
+
+
+setwd("C:/Users/michael/Documents/311/pix")
+for(i in 5:length( names(correlations) )  ){
+	ggsave( paste0("log",names(correlations)[i] ,".pdf") ,
 		plot= calls.plot[[ which(SC == names(correlations)[i] )]]) }
 
  
